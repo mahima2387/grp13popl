@@ -70,19 +70,25 @@
   (display (postorder tree '()))
   (newline))
 
+;; (my-max a b) -> number
+;; Returns the larger of two numbers. max is not an allowed built-in,
+;; so this helper uses only if and >.
+(define (my-max a b)
+  (if (> a b) a b))
+
 ;; (height tree) -> number
 ;; tree : a binary tree, either () or (value left right)
 ;; Returns the height of tree: 0 for (), and 1 plus the larger of the
 ;; two subtree heights for a node, so a single node has height 1.
 ;; Recursive reading: the height of () is 0; the height of (v l r) is
-;; 1 + max(height of l, height of r).
+;; 1 + my-max(height of l, height of r).
 ;; Tail recursive: no (tree recursion). The depth of the recursion is
 ;; only the height of the tree, so this is fine.
 (define (height tree)
   (if (null? tree)
       0
-      (+ 1 (max (height (cadr tree))
-                (height (caddr tree))))))
+      (+ 1 (my-max (height (cadr tree))
+                   (height (caddr tree))))))
 
 ;; (leaf-count tree acc) -> number
 ;; tree : a binary tree, either () or (value left right)
