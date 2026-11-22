@@ -15,7 +15,7 @@ test(empty, [fail])       :- split([], _, _).
 
 :- begin_tests(expr).
 
-test(single_number) :-
+test(single_number, [nondet]) :-
     expr([7], T, V), T == 7, V == 7.
 test(empty, [fail]) :- expr([], _, _).
 test(inexact_division_rejected) :-
@@ -27,7 +27,7 @@ test(division_by_zero_rejected) :-
 test(zero_over_zero_rejected) :-
     findall(V, expr([0,0], _, V), Vs),
     Vs == [0, 0, 0].
-test(negative_intermediate) :-
+test(negative_intermediate, [nondet]) :-
     expr([3,5], bin(-,3,5), V), V == -2.
 
 :- end_tests(expr).
