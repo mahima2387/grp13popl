@@ -29,3 +29,39 @@ apply_op(/, A, B, V) :-
     B =\= 0,
     A mod B =:= 0,
     V is A // B.
+
+% prec(+Op, -P): binding strength. * and / bind tighter than + and -.
+prec(+, 1).
+prec(-, 1).
+prec(*, 2).
+prec(/, 2).
+
+% tree_string(+Tree, -String)
+% String is the canonical no-space SWI string for Tree.
+% Reading: a number prints as decimal digits. Otherwise print the left
+% operand, the operator, then the right operand, adding parentheses by
+% the canonical rule.
+tree_string(N, S) :-
+    integer(N),
+    format(string(S), "~d", [N]).
+tree_string(bin(Op, L, R), S) :-
+    prec(Op, P),
+    left_operand(L, P, LS),
+    right_operand(R, P, RS),
+    format(string(S), "~w~w~w", [LS, Op, RS]).
+
+% Left operand: parenthesised only if its top operator has LOWER precedence.
+left_operand(T, P, S) :-
+    tree_string(T, TS),
+    (   T = bin(Op, _, _), prec(Op, Q), Q < P
+    ->  format(string(S), "(~w)", [TS])
+    ;   S = TS
+    ).
+
+% Right operand: parenthesised if its top operator has the SAME or lower precedence.
+right_operand(T, P, S) :-
+    tree_string(T, TS),
+    (   T = bin(Op, _, _), prec(Op, Q), Q =< P
+    ->  format(string(S), "(~w)", [TS])
+    ;   S = TS
+    ).
