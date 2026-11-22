@@ -87,6 +87,11 @@ clue(8, S) :-
     memberchk(p(_, Dept, Lang, data), S),
     Dept == research,
     Lang \== javascript.
+% CLUE 9: The friend who works in the testing department prefers the AI
+% project.
+clue(9, S) :-
+    memberchk(p(_, testing, _, Project), S),
+    Project == 'AI'.
 
 %! main is det.
 %
