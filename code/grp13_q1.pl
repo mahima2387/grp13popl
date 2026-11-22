@@ -36,3 +36,54 @@ solution([p('Alex',  D1, L1, P1),
     permutation(Langs, [L1, L2, L3, L4]),
     projects(Projects),
     permutation(Projects, [P1, P2, P3, P4]).
+
+%! clue(+N, +Solution) is semidet.
+%
+%  Declarative reading: clue number N (1 to 8) holds in the fully
+%  filled-in Solution. Each clause looks up the friend(s) it talks about
+%  with memberchk/2 (every value occurs exactly once, so the first match
+%  is the only match) and then checks the remaining conditions.
+
+% CLUE 1: The friend who prefers the AI project does not work in research
+% and is not Dana.
+clue(1, S) :-
+    memberchk(p(Name, Dept, _, 'AI'), S),
+    Dept \== research,
+    Name \== 'Dana'.
+% CLUE 2: Alex does not work in development and does not prefer C++.
+clue(2, S) :-
+    memberchk(p('Alex', Dept, Lang, _), S),
+    Dept \== development,
+    Lang \== 'c++'.
+% CLUE 3: The friend working in the testing department likes Python.
+clue(3, S) :-
+    memberchk(p(_, testing, Lang, _), S),
+    Lang == python.
+% CLUE 4: Ben prefers web projects and does not work in testing.
+clue(4, S) :-
+    memberchk(p('Ben', Dept, _, Project), S),
+    Project == web,
+    Dept \== testing.
+% CLUE 5: The friend whose favorite language is Java works in the design
+% department.
+clue(5, S) :-
+    memberchk(p(_, Dept, java, _), S),
+    Dept == design.
+% CLUE 6: Carla's project preference is not embedded, and her department
+% is not development.
+clue(6, S) :-
+    memberchk(p('Carla', Dept, _, Project), S),
+    Project \== embedded,
+    Dept \== development.
+% CLUE 7: Dana's favorite language is not Java, and she works in research
+% or testing.
+clue(7, S) :-
+    memberchk(p('Dana', Dept, Lang, _), S),
+    Lang \== java,
+    memberchk(Dept, [research, testing]).
+% CLUE 8: The friend who prefers data projects works in research and does
+% not use JavaScript.
+clue(8, S) :-
+    memberchk(p(_, Dept, Lang, data), S),
+    Dept == research,
+    Lang \== javascript.
