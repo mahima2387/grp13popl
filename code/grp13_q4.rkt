@@ -26,29 +26,44 @@
       (cons (f (car lst))
             (my-map f (cdr lst)))))
 
+;; (make-inserter x len-ok?) -> function
+;; x       : an atom to insert
+;; len-ok? : a function of one number that returns true when a list of that length should get x
+;; Returns a function of one argument (a list) that inserts x at the front of
+;; every list, at every level of nesting, whose length satisfies len-ok?.
+;; Lengths are measured on the original list before any insertion, and () is
+;; treated like any other list.
+;; Recursive reading: the returned function, called insert, first processes each
+;; element of the list (an atom stays as it is, a sublist is processed by insert),
+;; giving new-elements. Then, if (len-ok? (my-length original-list)) holds, the
+;; result is x consed onto new-elements; otherwise it is new-elements.
+;; Tail recursive: no. The recursion depth is the nesting depth plus the length of
+;; the longest list, which is fine for depth 100 and 10,000 elements.
+(define (make-inserter x len-ok?)
+  (letrec ((insert
+            (lambda (lst)
+              (let ((new-elements
+                     (my-map (lambda (e)
+                               (if (or (null? e) (pair? e))
+                                   (insert e)
+                                   e))
+                             lst)))
+                (if (len-ok? (my-length lst))
+                    (cons x new-elements)
+                    new-elements)))))
+    insert))
+
 ;; (insert-if-short x lst n) -> list
 ;; x   : an atom
 ;; lst : a (possibly nested) list whose elements are atoms or lists
 ;; n   : an integer, n >= 0
-;; Returns lst with x inserted at the front of every list, at every level
-;; of nesting, whose length is less than n. Lengths are measured on the
-;; original list before any insertion, and () is treated like any other list.
-;; Recursive reading: first process each element of lst (an atom stays as it
-;; is, a sublist is processed the same way), giving new-elements. Then, if
-;; the length of the original lst is less than n, the result is x consed
-;; onto new-elements; otherwise it is new-elements.
-;; Tail recursive: no. The recursion depth is the nesting depth plus the
-;; length of the longest list, which is fine for depth 100 and 10,000 elements.
+;; Returns lst with x inserted at the front of every list, at every level of
+;; nesting, whose length is less than n.
+;; Recursive reading: not recursive itself; it builds the inserter for x that
+;; accepts lengths below n, and applies it to lst.
+;; Tail recursive: not applicable.
 (define (insert-if-short x lst n)
-  (let ((new-elements
-         (my-map (lambda (e)
-                   (if (or (null? e) (pair? e))
-                       (insert-if-short x e n)
-                       e))
-                 lst)))
-    (if (< (my-length lst) n)
-        (cons x new-elements)
-        new-elements)))
+  ((make-inserter x (lambda (len) (< len n))) lst))
 
 ;; (print-insert-result) -> prints one line
 ;; Takes no arguments. Reads x, then lst, then n from standard input
