@@ -105,3 +105,14 @@ main :-
 %  as 'Alex', 'c++' and 'AI' print without quotes.
 print_friend(p(Name, Dept, Lang, Project)) :-
     format("~w = [~w, ~w, ~w]~n", [Name, Dept, Lang, Project]).
+
+%! count_solutions(+Active, -N) is det.
+%
+%  Declarative reading: N is the number of complete assignments that
+%  satisfy every clue whose number is in Active; clues not in Active are
+%  ignored. With Active = [] every assignment counts, so N = 13824.
+count_solutions(Active, N) :-
+    aggregate_all(count,
+                  ( solution(S),
+                    forall(member(K, Active), clue(K, S)) ),
+                  N).
