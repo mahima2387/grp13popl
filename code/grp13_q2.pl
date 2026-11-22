@@ -65,3 +65,23 @@ right_operand(T, P, S) :-
     ->  format(string(S), "(~w)", [TS])
     ;   S = TS
     ).
+
+% equation(+List, -Equation)
+% Equation is a canonical string "L=R" where L is an expression over a
+% non-empty prefix of List, R over the remaining non-empty suffix, and both
+% have the same value. Backtracks over every split and every pair of trees.
+% Reading: split the list in two, build a tree for each side with the same
+% value V, print both trees, and join them with "=".
+% Lists of length 0 or 1 cannot be split, so equation/2 fails for them.
+equation(List, Equation) :-
+    split(List, Left, Right),
+    expr(Left, LTree, V),
+    expr(Right, RTree, V),
+    tree_string(LTree, LS),
+    tree_string(RTree, RS),
+    format(string(Equation), "~w=~w", [LS, RS]).
+
+% generate_equation(+List, -Equation)
+% Equation is one valid equation for List. Fails if there is none.
+generate_equation(List, Equation) :-
+    once(equation(List, Equation)).
