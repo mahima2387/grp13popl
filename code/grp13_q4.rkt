@@ -49,3 +49,18 @@
     (if (< (my-length lst) n)
         (cons x new-elements)
         new-elements)))
+
+;; (print-insert-result) -> prints one line
+;; Takes no arguments. Reads x, then lst, then n from standard input
+;; (in that order, with read), and prints the result of
+;; (insert-if-short x lst n) with display, followed by a newline.
+;; Prints no prompt or any other text.
+;; Recursive reading: not recursive; it reads the three values and displays
+;; the result of insert-if-short on them.
+;; Tail recursive: not applicable.
+(define (print-insert-result)
+  (let* ((x (read))
+         (lst (read))
+         (n (read)))
+    (display (insert-if-short x lst n))
+    (newline)))
