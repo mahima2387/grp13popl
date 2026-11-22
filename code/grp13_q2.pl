@@ -85,3 +85,17 @@ equation(List, Equation) :-
 % Equation is one valid equation for List. Fails if there is none.
 generate_equation(List, Equation) :-
     once(equation(List, Equation)).
+
+% all_equations(+List, -Equations)
+% Equations is the sorted, duplicate-free list of every valid equation.
+% sort/2 removes duplicates. [] if there is none, including for lists of
+% length 0 or 1.
+all_equations(List, Equations) :-
+    findall(E, equation(List, E), Es),
+    sort(Es, Equations).
+
+% count_equations(+List, -N)
+% N is the number of distinct valid equations for List.
+count_equations(List, N) :-
+    all_equations(List, Equations),
+    length(Equations, N).
