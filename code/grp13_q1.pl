@@ -87,3 +87,21 @@ clue(8, S) :-
     memberchk(p(_, Dept, Lang, data), S),
     Dept == research,
     Lang \== javascript.
+
+%! main is det.
+%
+%  Declarative reading: prints the first assignment (in solution/1 order)
+%  that satisfies clues 1 to 8, one friend per line, in the order Alex,
+%  Ben, Carla, Dana. Fails silently if no assignment satisfies the clues.
+main :-
+    once(( solution(S),
+           forall(between(1, 8, N), clue(N, S)) )),
+    maplist(print_friend, S).
+
+%! print_friend(+Friend) is det.
+%
+%  Declarative reading: prints Friend = p(Name, Dept, Lang, Project) as
+%  the line "Name = [Dept, Lang, Project]". Uses ~w so quoted atoms such
+%  as 'Alex', 'c++' and 'AI' print without quotes.
+print_friend(p(Name, Dept, Lang, Project)) :-
+    format("~w = [~w, ~w, ~w]~n", [Name, Dept, Lang, Project]).
