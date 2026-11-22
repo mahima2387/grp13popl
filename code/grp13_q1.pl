@@ -39,7 +39,7 @@ solution([p('Alex',  D1, L1, P1),
 
 %! clue(+N, +Solution) is semidet.
 %
-%  Declarative reading: clue number N (1 to 8) holds in the fully
+%  Declarative reading: clue number N (1 to 9) holds in the fully
 %  filled-in Solution. Each clause looks up the friend(s) it talks about
 %  with memberchk/2 (every value occurs exactly once, so the first match
 %  is the only match) and then checks the remaining conditions.
@@ -87,8 +87,7 @@ clue(8, S) :-
     memberchk(p(_, Dept, Lang, data), S),
     Dept == research,
     Lang \== javascript.
-% CLUE 9: The friend who works in the testing department prefers the AI
-% project.
+% CLUE 9: The friend who works in the testing department prefers the AI project.
 clue(9, S) :-
     memberchk(p(_, testing, _, Project), S),
     Project == 'AI'.
@@ -121,3 +120,4 @@ count_solutions(Active, N) :-
                   ( solution(S),
                     forall(member(K, Active), clue(K, S)) ),
                   N).
+                  
