@@ -69,3 +69,43 @@
   (newline)
   (display (postorder tree '()))
   (newline))
+
+;; (height tree) -> number
+;; tree : a binary tree, either () or (value left right)
+;; Returns the height of tree: 0 for (), and 1 plus the larger of the
+;; two subtree heights for a node, so a single node has height 1.
+;; Recursive reading: the height of () is 0; the height of (v l r) is
+;; 1 + max(height of l, height of r).
+;; Tail recursive: no (tree recursion). The depth of the recursion is
+;; only the height of the tree, so this is fine.
+(define (height tree)
+  (if (null? tree)
+      0
+      (+ 1 (max (height (cadr tree))
+                (height (caddr tree))))))
+
+;; (leaf-count tree acc) -> number
+;; tree : a binary tree, either () or (value left right)
+;; acc  : a number (the number of leaves found so far, in the part not yet counted)
+;; Returns the number of leaves in tree plus acc. A leaf is a node whose
+;; left and right subtrees are both (); the empty tree has no leaves.
+;; Recursive reading: the count for () onto acc is acc; the count for a node
+;; with two empty subtrees onto acc is acc + 1; otherwise the count for (v l r)
+;; onto acc is the count for l onto (the count for r onto acc).
+;; Tail recursive: partly. The call on the right subtree is nested inside the
+;; call on the left. The depth of the recursion is only the height of the tree.
+(define (leaf-count tree acc)
+  (cond ((null? tree) acc)
+        ((and (null? (cadr tree)) (null? (caddr tree))) (+ acc 1))
+        (else (leaf-count (cadr tree)
+                          (leaf-count (caddr tree) acc)))))
+
+;; (print-height-and-leaves tree) -> prints one line
+;; tree : a binary tree, either () or (value left right)
+;; Prints the list (height leaf-count) of tree on one line.
+;; Recursive reading: not recursive itself; it displays
+;; (list (height tree) (leaf-count tree 0)) and then a newline.
+;; Tail recursive: not applicable.
+(define (print-height-and-leaves tree)
+  (display (list (height tree) (leaf-count tree 0)))
+  (newline))
